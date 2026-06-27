@@ -6,6 +6,7 @@ const models = {
         { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B (Free)' }
     ],
     google: [
+        { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Polecany)' },
         { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
         { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' }
     ]
@@ -35,13 +36,14 @@ function updateModelList() {
 
 providerSelect.addEventListener('change', updateModelList);
 
-document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-    const config = {
-        provider: providerSelect.value,
-        apiKey: apiKeyInput.value,
-        model: modelSelect.value
-    };
-    localStorage.setItem('solverConfig', JSON.stringify(config));
+document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+    let result = await chrome.storage.local.get('solverConfig');
+    let saved = result.solverConfig || {};
+    saved.provider = providerSelect.value;
+    saved.apiKey = apiKeyInput.value;
+    saved.model = modelSelect.value;
+    
+    await chrome.storage.local.set({ solverConfig: saved });
     showStatus('Zapisano pomyślnie!', 'success');
 });
 
@@ -49,6 +51,15 @@ document.getElementById('testApiBtn').addEventListener('click', async () => {
     const key = apiKeyInput.value;
     const provider = providerSelect.value;
     const msg = document.getElementById('statusMsg');
+    if (!key) {
+        showStatus('Wprowadź klucz API', 'danger');
+        return;
+    }
+    
+    if (!provider || !modelSelect.value) {
+        showStatus('Wybierz dostawcę i model', 'danger');
+        return;
+    }
     
     msg.textContent = 'Łączenie...';
     
@@ -75,14 +86,20 @@ function showStatus(txt, type) {
     msg.style.color = type === 'success' ? '#22c55e' : '#ef4444';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     updateModelList();
-    const saved = JSON.parse(localStorage.getItem('solverConfig'));
+    let result = await chrome.storage.local.get('solverConfig');
+    const saved = result.solverConfig;
     if (saved) {
-        providerSelect.value = saved.provider;
+        if (saved.provider) providerSelect.value = saved.provider;
         updateModelList();
-        modelSelect.value = saved.model;
-        apiKeyInput.value = saved.apiKey;
+        if (saved.model) modelSelect.value = saved.model;
+        if (saved.apiKey) apiKeyInput.value = saved.apiKey;
+        if (saved.solverActive !== undefined) {
+            solverToggle.checked = saved.solverActive;
+            statusText.textContent = saved.solverActive ? 'Aktywny' : 'Nieaktywny';
+            statusText.className = saved.solverActive ? 'status-on' : 'status-off';
+        }
     }
 });
 
@@ -91,7 +108,13 @@ document.getElementById('aboutBtn').onclick = () => showPage('aboutPage');
 document.getElementById('backFromSettings').onclick = () => showPage('mainMenu');
 document.getElementById('backFromAbout').onclick = () => showPage('mainMenu');
 
-solverToggle.onchange = (e) => {
-    statusText.textContent = e.target.checked ? 'Aktywny' : 'Nieaktywny';
-    statusText.className = e.target.checked ? 'status-on' : 'status-off';
+solverToggle.onchange = async (e) => {
+    const isActive = e.target.checked;
+    statusText.textContent = isActive ? 'Aktywny' : 'Nieaktywny';
+    statusText.className = isActive ? 'status-on' : 'status-off';
+    
+    let result = await chrome.storage.local.get('solverConfig');
+    let saved = result.solverConfig || {};
+    saved.solverActive = isActive;
+    await chrome.storage.local.set({ solverConfig: saved });
 };
