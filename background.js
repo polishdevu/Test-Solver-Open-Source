@@ -20,6 +20,8 @@ async function handleSolveQuestion(prompt) {
         
         if (provider === 'openrouter') {
             return await fetchOpenRouter(prompt, config.apiKey, config.model);
+        } else if (provider === 'agentrouter') {
+            return await fetchAgentRouter(prompt, config.apiKey, config.model);
         } else if (provider === 'google') {
             return await fetchGoogleAI(prompt, config.apiKey, config.model);
         } else {
@@ -49,6 +51,29 @@ async function fetchOpenRouter(prompt, apiKey, model) {
 
     if (!response.ok) {
         throw new Error(`OpenRouter HTTP error! status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return { answer: json.choices[0].message.content.trim() };
+}
+
+async function fetchAgentRouter(prompt, apiKey, model) {
+    const response = await fetch('https://agentrouter.org/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: 20,
+            temperature: 0.1
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`AgentRouter HTTP error! status: ${response.status}`);
     }
 
     const json = await response.json();

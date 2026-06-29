@@ -9,6 +9,13 @@ const models = {
         { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Polecany)' },
         { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
         { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' }
+    ],
+    agentrouter: [
+        { id: 'claude-opus-4-6', name: 'Claude Opus 4.6' },
+        { id: 'claude-opus-4-7', name: 'Claude Opus 4.7' },
+        { id: 'claude-opus-4-8', name: 'Claude Opus 4.8' },
+        { id: 'glm-5.2', name: 'GLM 5.2' },
+        { id: 'gpt-5.5', name: 'GPT 5.5' }
     ]
 };
 
@@ -65,10 +72,12 @@ document.getElementById('testApiBtn').addEventListener('click', async () => {
     
     let url = provider === 'openrouter' 
         ? 'https://openrouter.ai/api/v1/models' 
+        : provider === 'agentrouter'
+        ? 'https://agentrouter.org/v1/models'
         : `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`;
 
     try {
-        const headers = provider === 'openrouter' ? { 'Authorization': `Bearer ${key}` } : {};
+        const headers = (provider === 'openrouter' || provider === 'agentrouter') ? { 'Authorization': `Bearer ${key}` } : {};
         const response = await fetch(url, { headers });
         
         if (response.ok) {
