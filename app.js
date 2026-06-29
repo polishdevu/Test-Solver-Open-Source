@@ -117,6 +117,18 @@ document.getElementById('aboutBtn').onclick = () => showPage('aboutPage');
 document.getElementById('backFromSettings').onclick = () => showPage('mainMenu');
 document.getElementById('backFromAbout').onclick = () => showPage('mainMenu');
 
+document.getElementById('screenshotBtn').addEventListener('click', async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id) {
+        return;
+    }
+
+    const response = await chrome.runtime.sendMessage({ action: 'startScreenshot', tabId: tab.id });
+    if (response?.error) {
+        console.error('[Test Solver] Screenshot error:', response.error);
+    }
+});
+
 solverToggle.onchange = async (e) => {
     const isActive = e.target.checked;
     statusText.textContent = isActive ? 'Aktywny' : 'Nieaktywny';

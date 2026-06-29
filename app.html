@@ -1,108 +1,108 @@
-<!DOCTYPE html>
-<html lang="pl-PL">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="app.css">
-</head>
-<body>
-    <div class="app-container">
-        <!-- Główne menu -->
-        <div id="mainMenu" class="page">
-            <header>
-                <h1>Test<span class="accent">Solver</span></h1>
-                <p class="subtitle">Bo komu chce sie uczyć?</p>
-            </header>
+    <!DOCTYPE html>
+    <html lang="pl-PL">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="app.css">
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- Główne menu -->
+            <div id="mainMenu" class="page">
+                <header>
+                    <h1>Test<span class="accent">Solver</span></h1>
+                    <p class="subtitle">Bo komu chce sie uczyć?</p>
+                </header>
 
-            <div class="card quota-card">
-                <div class="quota-header">
-                    <span class="quota-title">Dostępne odpowiedzi</span>
-                    <span class="quota-badge" id="quotaCount">Wkrótce</span>
+                <div class="card quota-card">
+                    <div class="quota-header">
+                        <span class="quota-title">Dostępne odpowiedzi</span>
+                        <span class="quota-badge" id="quotaCount">Wkrótce</span>
+                    </div>
+                    <p class="quota-info">Monitorujemy limit Twojego API, aby nic Cię nie zaskoczyło.</p>
                 </div>
-                <p class="quota-info">Monitorujemy limit Twojego API, aby nic Cię nie zaskoczyło.</p>
-            </div>
 
-            <div class="card solver-card">
-                <div class="solver-info">
-                    <span class="label">Status Solvera</span>
-                    <span id="statusText" class="status-off">Nieaktywny</span>
+                <div class="card solver-card">
+                    <div class="solver-info">
+                        <span class="label">Status Solvera</span>
+                        <span id="statusText" class="status-off">Nieaktywny</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="solverToggle">
+                        <span class="slider"></span>
+                    </label>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" id="solverToggle">
-                    <span class="slider"></span>
-                </label>
+
+                <div class="nav-grid">
+                    <button class="nav-btn primary" id="screenshotBtn">
+                        <span class="icon">📸</span> Zrzut ekranu
+                    </button>
+                    <button class="nav-btn" id="settingsBtn">
+                        <span class="icon">⚙️</span> Ustawienia
+                    </button>
+                    <button class="nav-btn" id="aboutBtn">
+                        <span class="icon">💡</span> O wtyczce
+                    </button>
+                </div>
+                
+                <p class="footer">Made with ❤️ by Bartosz Kuba</p>
             </div>
 
-            <div class="nav-grid">
-                <button class="nav-btn primary" id="screenshotBtn">
-                    <span class="icon">📸</span> Zrzut ekranu
-                </button>
-                <button class="nav-btn" id="settingsBtn">
-                    <span class="icon">⚙️</span> Ustawienia
-                </button>
-                <button class="nav-btn" id="aboutBtn">
-                    <span class="icon">💡</span> O wtyczce
-                </button>
+            <!-- Ustawienia -->
+            <div id="settingsPage" class="page hidden">
+                <div class="page-header">
+                    <button class="back-btn" id="backFromSettings">←</button>
+                    <h2>Konfiguracja AI</h2>
+                </div>
+
+                <div class="form-container">
+                    <div class="input-group">
+                        <label>Dostawca usługi</label>
+                        <select id="providerSelect">
+                            <option value="openrouter">OpenRouter (GPT, Claude, Llama)</option>
+                            <option value="google">Google AI Studio (Gemini)</option>
+                            <option value="agentrouter">Agent Router</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Klucz API</label>
+                        <input type="password" id="apiKey" placeholder="Wklej skopiowany klucz...">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Model</label>
+                        <select id="modelSelect">
+                            <!-- Opcje ładowane dynamicznie z JS -->
+                        </select>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-test" id="testApiBtn">Testuj połączenie</button>
+                        <button class="btn-save" id="saveSettingsBtn">Zapisz ustawienia</button>
+                    </div>
+                    <p id="statusMsg" class="status-msg"></p>
+                </div>
             </div>
-            
-            <p class="footer">Made with ❤️ by Bartosz Kuba</p>
+            <!-- O wtyczce -->
+            <div id="aboutPage" class="page hidden">
+                <div class="page-header">
+                    <button class="back-btn" id="backFromAbout">←</button>
+                    <h2>O projekcie</h2>
+                </div>
+                <div class="card">
+                    <p>Test Solver to narzędzie stworzone z myślą o pomocy uczniom</p>
+                    <p>Jaki mam zamiar na tą aplikacje?</p>
+                    <ul>
+                        <li>Żeby działało o rozwiązywało test - chociaz na testportalu</li>
+                        <li>Rozwiązywanie testów na quizziz</li>
+                        <li>AntyTestPortal - dzięki czemu możesz zamykać kartę</li>
+                        <li>Rozwiązywanie testów na Kahoot??? Może być ciężko...</li>
+                    </ul>
+                    <p>Wersja: 0.0.1 (Unstable)</p>
+                    <p>Wesprzyj moją działalność polubienie na Githubie i google web store - to nic nie kosztuje a sprawisz mi usmiech na twarzy</p>
+                </div>
+            </div>
         </div>
-
-        <!-- Ustawienia -->
-        <div id="settingsPage" class="page hidden">
-            <div class="page-header">
-                <button class="back-btn" id="backFromSettings">←</button>
-                <h2>Konfiguracja AI</h2>
-            </div>
-
-            <div class="form-container">
-                <div class="input-group">
-                    <label>Dostawca usługi</label>
-                    <select id="providerSelect">
-                        <option value="openrouter">OpenRouter (GPT, Claude, Llama)</option>
-                        <option value="google">Google AI Studio (Gemini)</option>
-                        <option value="agentrouter">Agent Router</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>Klucz API</label>
-                    <input type="password" id="apiKey" placeholder="Wklej skopiowany klucz...">
-                </div>
-
-                <div class="input-group">
-                    <label>Model</label>
-                    <select id="modelSelect">
-                        <!-- Opcje ładowane dynamicznie z JS -->
-                    </select>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn-test" id="testApiBtn">Testuj połączenie</button>
-                    <button class="btn-save" id="saveSettingsBtn">Zapisz ustawienia</button>
-                </div>
-                <p id="statusMsg" class="status-msg"></p>
-            </div>
-        </div>
-        <!-- O wtyczce -->
-        <div id="aboutPage" class="page hidden">
-            <div class="page-header">
-                <button class="back-btn" id="backFromAbout">←</button>
-                <h2>O projekcie</h2>
-            </div>
-            <div class="card">
-                <p>Test Solver to narzędzie stworzone z myślą o pomocy uczniom</p>
-                <p>Jaki mam zamiar na tą aplikacje?</p>
-                <ul>
-                    <li>Żeby działało o rozwiązywało test - chociaz na testportalu</li>
-                    <li>Rozwiązywanie testów na quizziz</li>
-                    <li>AntyTestPortal - dzięki czemu możesz zamykać kartę</li>
-                    <li>Rozwiązywanie testów na Kahoot??? Może być ciężko...</li>
-                </ul>
-                <p>Wersja: 0.0.1 (Unstable)</p>
-                <p>Wesprzyj moją działalność polubienie na Githubie i google web store - to nic nie kosztuje a sprawisz mi usmiech na twarzy</p>
-            </div>
-        </div>
-    </div>
-    <script src="app.js"></script>
-</body>
-</html>
+        <script src="app.js"></script>
+    </body>
+    </html>

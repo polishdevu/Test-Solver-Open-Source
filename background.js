@@ -3,7 +3,68 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         handleSolveQuestion(request.prompt).then(sendResponse);
         return true;
     }
+
+    if (request.action === "startScreenshot") {
+        handleStartScreenshot(request.tabId).then(sendResponse);
+        return true;
+    }
+
+    if (request.action === "screenshotSelectionDone") {
+        handleScreenshotSelection(request.rect, sender.tab?.id).then(sendResponse);
+        return true;
+    }
+
+    if (request.action === "screenshotSelectionCancelled") {
+        sendResponse({ ok: true });
+        return true;
+    }
 });
+
+async function handleStartScreenshot(tabId) {
+    try {
+        if (!tabId) {
+            return { error: 'Brak aktywnej karty.' };
+        }
+
+        await chrome.scripting.executeScript({
+            target: { tabId },
+            files: ['screenshot-selection.js']
+        });
+
+        await chrome.tabs.sendMessage(tabId, { action: 'startScreenshotSelection' });
+        return { ok: true };
+    } catch (error) {
+        console.error('[Test Solver BG] Błąd uruchamiania zrzutu:', error);
+        return { error: error.message || 'Nie udało się uruchomić zaznaczania obszaru.' };
+    }
+}
+
+async function handleScreenshotSelection(rect, tabId) {
+    try {
+        if (!tabId) {
+            return { error: 'Nie znaleziono aktywnej karty.' };
+        }
+
+        const selectionRect = {
+            x: Math.max(0, Math.round(rect?.x || 0)),
+            y: Math.max(0, Math.round(rect?.y || 0)),
+            width: Math.max(1, Math.round(rect?.width || 0)),
+            height: Math.max(1, Math.round(rect?.height || 0))
+        };
+
+        const dataUrl = await chrome.tabs.captureVisibleTab(tabId, {
+            format: 'png',
+            quality: 100,
+            rect: selectionRect
+        });
+
+        await chrome.tabs.create({ url: dataUrl, active: true });
+        return { ok: true };
+    } catch (error) {
+        console.error('[Test Solver BG] Błąd tworzenia zrzutu:', error);
+        return { error: error.message || 'Nie udało się wykonać zrzutu ekranu.' };
+    }
+}
 
 async function handleSolveQuestion(prompt) {
     try {
